@@ -1,0 +1,17 @@
+{
+    "name": "homeserverinc/homeserver-api",
+    "description": "Home Server API Client Application",
+    "type": "library",
+    "authors": [
+        {
+            "name": "marcioelias",
+            "email": "marcioelias@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+          "HomeServerInc\\API\\": "src/"
+        }
+    }
+}
