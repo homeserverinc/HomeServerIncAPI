@@ -56,6 +56,13 @@ class HomeServerApiClient {
     protected $tokenType = '';
 
     /**
+     * Token Time To Live
+     *
+     * @var integer
+     */
+    protected $tokenTTL = 1800;
+
+    /**
      * Method constructor, used to instantiate the object
      *
      * @param $user
@@ -64,6 +71,10 @@ class HomeServerApiClient {
     public function __construct($user, $pass) {
         $this->user = $user;
         $this->pass = $pass;
+        if (isset($_COOKIE['token_time'])) {
+            $this->tokenTime = $_COOKIE['token_time'];
+
+        }
     }
 
     /**
@@ -111,6 +122,11 @@ class HomeServerApiClient {
      * @return bool
      */
     public function auth() {
+        if ($_COOKIE['_HomeServerIncToken']) {
+            $this->token = $_COOKIE['_HomeServerIncToken'];
+            $this->tokenType = $_COOKIE['_HomeServerIncTokenType'];
+            return true;
+        }
         $url = '/api/login';
         $method = 'POST';
 
@@ -134,6 +150,8 @@ class HomeServerApiClient {
         } else {
             $this->token = $response->data['access_token'];
             $this->tokenType = $response->data['token_type'];
+            setcookie('_HomeServerIncToken', $this->token, time()+$this->tokenTTL);
+            setcookie('_HomeServerIncTokenType', $this->tokenType, time()+$this->tokenTTL);
             return true;
         }
     }
