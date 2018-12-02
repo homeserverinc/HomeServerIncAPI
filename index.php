@@ -4,22 +4,27 @@ require_once 'vendor/autoload.php';
 
 use HomeServerInc\API\HomeServerApiClient;
 
-$client = new HomeServerApiClient('user', 'password');
+
+$request = explode('/', $_SERVER['REQUEST_URI']);
+
+$service = $request[1];
+$param = isset($request[2]) ? $request[2] : null;
 
 
-if ($client->auth()) {
-    $response = $client->getSite('49c96f2f-733b-468f-b374-bc3f3116cb34');
+$apiClient = new HomeServerApiClient('superadministrator@app.com', 'password');
+if ($apiClient->auth()) {
+    switch ($service) {
+        case 'service':
+            echo $apiClient->getService($param);
+            break;
 
-    //working with arrays
-    echo "<h1>Arrays</h1>";
-    $site = json_decode($response, true)['data'];
-    echo $site['name'].'<br />';
-    echo $site['phone']['friendly_name'].'<br />';
-
-
-    echo "<h1>StdClass</h1>";
-    //working with StdClass
-    $site = json_decode($response)->{'data'};
-    echo $site->{'name'}.'<br />';
-    echo $site->{'phone'}->{'friendly_name'}.'<br />';
+        case 'question':
+            echo $apiClient->getQuestion($param);
+            break;
+            
+        default:  
+            include('home.php');
+            break;
+    }
 }
+?>
